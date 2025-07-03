@@ -2,7 +2,10 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
 
 import connectionFactory.ConnectionDatabase;
 import model.Cliente;
@@ -35,7 +38,40 @@ public class ClienteDAO {
 			ConnectionDatabase.closeConnection(con, stmt);
 
 		}
-
+	}
+		
+		public ArrayList<Cliente>read(){
+			Connection con = ConnectionDatabase.getConnection();
+			PreparedStatement stmt = null;
+			ResultSet rs = null;
+			ArrayList<Cliente> clientes = new ArrayList<>();
+			
+			try {
+				stmt = con.prepareStatement("SELECT * FROM Cliente");
+				rs = stmt.executeQuery();
+				
+				while (rs.next()) {
+					Cliente cliente = new Cliente();
+					cliente.setIdCliente(rs.getString("idCliente"));
+					cliente.setNomeCliente(rs.getString("nomeCliente"));
+					cliente.setCpfCliente(rs.getString("cpfCliente"));
+					cliente.setDataNasc(rs.getString("dataNasc"));
+					cliente.setTelefone(rs.getString("telefone"));
+					cliente.setEndereco(rs.getString("endereco"));
+					cliente.setEmail(rs.getString("telefone"));
+					clientes.add(cliente);
+					
+				}
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+				throw new RuntimeException("Erro ao ler os dados",e);
+			}finally{
+				ConnectionDatabase.closeConnection(con,stmt,rs);
+			}
+			return clientes;
+		
+		}
 	}
 
 
@@ -43,5 +79,5 @@ public class ClienteDAO {
 
 
 
-}
+
 
